@@ -21,20 +21,29 @@ import requests
 
 import os
 
+import re
+
 class TickerLookup:
     """Service for looking up stock ticker symbols using LLM."""
     OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
-    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
     MODEL = "deepseek/deepseek-chat-v3.1:free"
 
     def __init__(self):
-        self.headers = {
-            "Authorization": f"Bearer {self.OPENROUTER_API_KEY}",
-            "Content-Type": "application/json",
-            "HTTP-Referer": "https://github.com/pranay784/stockcheck"
-        }
+        # Use st.secrets for the API key
+        self.api_key = st.secrets.get("OPENROUTER_API_KEY")
+        if not self.api_key:
+            st.error("OpenRouter API key not found. Please add it to your .streamlit/secrets.toml file.")
+            self.headers = {}
+        else:
+            self.headers = {
+                "Authorization": f"Bearer {self.api_key}",
+                "Content-Type": "application/json",
+                "HTTP-Referer": "https://github.com/pranay784/stockcheck"
+            }
 
     def find_ticker(self, company_name: str) -> dict:
+        if not self.api_key:
+            return {"success": False, "ticker": None, "error": "API key not configured."}
         if not company_name:
             return {"success": False, "ticker": None, "error": "Company name is required"}
         try:
@@ -425,7 +434,7 @@ def main():
                     st.markdown("**Performance Metrics**")
                     metrics_data = {
                         'ROE': dashboard.quote_data.get('ROE', 'N/A'),
-                        'ROI': dashboard.quote_data.get('ROI', 'N/A'),
+                        'ROI (ROIC)': dashboard.quote_data.get('ROIC', 'N/A'),
                         'ROA': dashboard.quote_data.get('ROA', 'N/A'),
                         'Profit Margin': dashboard.quote_data.get('Profit Margin', 'N/A')
                     }
@@ -434,11 +443,20 @@ def main():
 
                 with col2:
                     st.markdown("**Risk & Dividend**")
+                    
+                    # Extract and display dividend info
+                    dividend_est = dashboard.quote_data.get('Dividend Est.', dashboard.quote_data.get('Dividend TTM', 'N/A'))
+                    dividend_percent = 'N/A'
+                    if isinstance(dividend_est, str):
+                        match = re.search(r'\((\d+\.\d+)\%\)', dividend_est)
+                        if match:
+                            dividend_percent = f"{match.group(1)}%"
+
                     risk_data = {
                         'Beta': dashboard.quote_data.get('Beta', 'N/A'),
-                        'Volatility': dashboard.quote_data.get('Volatility', 'N/A'),
-                        'Dividend': dashboard.quote_data.get('Dividend', 'N/A'),
-                        'Dividend %': dashboard.quote_data.get('Dividend %', 'N/A')
+                        'Volatility (W/M)': f"{dashboard.quote_data.get('Volatility W', 'N/A')} / {dashboard.quote_data.get('Volatility M', 'N/A')}",
+                        'Dividend': dividend_est.split(' ')[0] if isinstance(dividend_est, str) else 'N/A',
+                        'Dividend %': dividend_percent
                     }
                     for metric, value in risk_data.items():
                         st.metric(label=metric, value=value)
@@ -446,6 +464,11 @@ def main():
                 # Trading Signal
                 st.markdown("**🚨 Trading Signal**")
                 signal = dashboard.quote_data.get('Signal', 'N/A')
+                
+                # Handle empty list or non-string values from the API
+                if not isinstance(signal, str) or not signal.strip():
+                    signal = "N/A"
+
                 if signal == 'Buy':
                     st.success(f"**Signal:** {signal}")
                 elif signal == 'Sell':

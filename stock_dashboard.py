@@ -112,7 +112,7 @@ class StockDashboard:
                 'P/S': '6.1',
                 'PEG': '1.8',
                 'ROE': '32.5%',
-                'ROI': '28.3%',
+                'ROIC': '28.3%',  # Changed from ROI to ROIC
                 'ROA': '18.7%',
                 'Profit Margin': '22.4%',
                 'Dividend': '$0.96',
@@ -121,7 +121,8 @@ class StockDashboard:
                 'Recommendation': 'Buy',
                 'Target Price': '$165.00',
                 'Beta': '1.25',
-                'Volatility': '25.2%',
+                'Volatility W': '25.2%',  # Changed to Volatility W
+                'Volatility M': '20.1%',  # Added Volatility M
                 'Description': 'Sample company description',
                 'Signal': 'Buy',
                 'Ratings': 'Positive'
@@ -135,85 +136,92 @@ class StockDashboard:
             return
 
         print(f"\n{'='*60}")
-        print(f"📊 STOCK DASHBOARD - {self.ticker}")
+        print(f"📊 STOCK DASHBOARD - {self.ticker.upper()}")
         print(f"{'='*60}")
 
-        # Company Overview
+        # COMPANY OVERVIEW
         print("\n🏢 COMPANY OVERVIEW")
         print(f"{'-'*30}")
-        print(f"Company: {self.quote_data.get('Company', 'N/A')}")
-        print(f"Sector: {self.quote_data.get('Sector', 'N/A')}")
-        print(f"Industry: {self.quote_data.get('Industry', 'N/A')}")
-        print(f"Country: {self.quote_data.get('Country', 'N/A')}")
+        print(f"COMPANY: {self.quote_data.get('Company', 'N/A')}")
+        print(f"SECTOR: {self.quote_data.get('Sector', 'N/A')}")
+        print(f"INDUSTRY: {self.quote_data.get('Industry', 'N/A')}")
+        print(f"COUNTRY: {self.quote_data.get('Country', 'N/A')}")
 
-        # Financial Metrics
+        # FINANCIAL METRICS
         print("\n💰 FINANCIAL METRICS")
         print(f"{'-'*30}")
-        print(f"Market Cap: {self.quote_data.get('Market Cap', 'N/A')}")
-        print(f"Enterprise Value: {self.quote_data.get('Enterprise Value', 'N/A')}")
-        print(f"Price: ${self.quote_data.get('Price', 'N/A')}")
-        print(f"52W High: ${self.quote_data.get('52W High', 'N/A')}")
-        print(f"52W Low: ${self.quote_data.get('52W Low', 'N/A')}")
-        print(f"Volume: {self.quote_data.get('Volume', 'N/A')}")
+        print(f"MARKET CAP: {self.quote_data.get('Market Cap', 'N/A')}")
+        print(f"ENTERPRISE VALUE: {self.quote_data.get('Enterprise Value', 'N/A')}")
+        print(f"PRICE: ${self.quote_data.get('Price', 'N/A')}")
+        print(f"52W HIGH: ${self.quote_data.get('52W High', 'N/A')}")
+        print(f"52W LOW: ${self.quote_data.get('52W Low', 'N/A')}")
+        print(f"VOLUME: {self.quote_data.get('Volume', 'N/A')}")
 
-        # Valuation Ratios
+        # VALUATION RATIOS
         print("\n📈 VALUATION RATIOS")
         print(f"{'-'*30}")
-        print(f"P/E Ratio: {self.quote_data.get('P/E', 'N/A')}")
-        print(f"P/B Ratio: {self.quote_data.get('P/B', 'N/A')}")
-        print(f"P/S Ratio: {self.quote_data.get('P/S', 'N/A')}")
-        print(f"PEG Ratio: {self.quote_data.get('PEG', 'N/A')}")
+        print(f"P/E RATIO: {self.quote_data.get('P/E', 'N/A')}")
+        print(f"P/B RATIO: {self.quote_data.get('P/B', 'N/A')}")
+        print(f"P/S RATIO: {self.quote_data.get('P/S', 'N/A')}")
+        print(f"PEG RATIO: {self.quote_data.get('PEG', 'N/A')}")
 
-        # Performance Metrics
+        # PERFORMANCE METRICS
         print("\n📊 PERFORMANCE METRICS")
         print(f"{'-'*30}")
         print(f"ROE: {self.quote_data.get('ROE', 'N/A')}")
-        print(f"ROI: {self.quote_data.get('ROI', 'N/A')}")
+        print(f"ROI (ROIC): {self.quote_data.get('ROIC', 'N/A')}")
         print(f"ROA: {self.quote_data.get('ROA', 'N/A')}")
-        print(f"Profit Margin: {self.quote_data.get('Profit Margin', 'N/A')}")
+        print(f"PROFIT MARGIN: {self.quote_data.get('Profit Margin', 'N/A')}")
 
-        # Dividend Information
+        # DIVIDEND INFORMATION
         print("\n💎 DIVIDEND INFORMATION")
         print(f"{'-'*30}")
-        print(f"Dividend: {self.quote_data.get('Dividend', 'N/A')}")
-        print(f"Dividend %: {self.quote_data.get('Dividend %', 'N/A')}")
-        print(f"Payout Ratio: {self.quote_data.get('Payout Ratio', 'N/A')}")
+        dividend_est = self.quote_data.get('Dividend Est.', self.quote_data.get('Dividend TTM', 'N/A'))
+        dividend_percent = 'N/A'
+        if isinstance(dividend_est, str):
+            match = re.search(r'\(([^%]+%)\)', dividend_est)
+            if match:
+                dividend_percent = match.group(1)
+        print(f"DIVIDEND: {dividend_est}")
+        print(f"DIVIDEND %: {dividend_percent}")
+        print(f"PAYOUT RATIO: {self.quote_data.get('Payout Ratio', 'N/A')}")
 
-        # Analyst Recommendations
+        # ANALYST RECOMMENDATIONS
         print("\n🎯 ANALYST RECOMMENDATIONS")
         print(f"{'-'*30}")
-        print(f"Recommendation: {self.quote_data.get('Recommendation', 'N/A')}")
-        print(f"Target Price: ${self.quote_data.get('Target Price', 'N/A')}")
+        print(f"RECOMMENDATION: {self.quote_data.get('Recom', 'N/A')}")
+        print(f"TARGET PRICE: ${self.quote_data.get('Target Price', 'N/A')}")
 
-        # Risk Metrics
+        # RISK METRICS
         print("\n⚠️  RISK METRICS")
         print(f"{'-'*30}")
-        print(f"Beta: {self.quote_data.get('Beta', 'N/A')}")
-        print(f"Volatility: {self.quote_data.get('Volatility', 'N/A')}")
+        print(f"BETA: {self.quote_data.get('Beta', 'N/A')}")
+        print(f"VOLATILITY (W/M): {self.quote_data.get('Volatility W', 'N/A')} / {self.quote_data.get('Volatility M', 'N/A')}")
 
-        # Chart Information
+        # CHART INFORMATION
         print("\n📊 CHART INFORMATION")
         print(f"{'-'*30}")
         if self.stock:
             try:
-                charts_available = self.stock.ticker_charts()
+                self.stock.ticker_charts()
                 print(f"✅ Charts available for {self.ticker}")
-                print("Chart types: Price, Volume, RSI, MACD, Bollinger Bands")
-                print("💡 Tip: Charts show technical indicators and price movements")
             except Exception as e:
                 print(f"Charts: Unable to fetch ({e})")
         else:
             print("Charts: Real-time charts available on Finviz.com")
 
-        # Trading Signal
+        # TRADING SIGNAL
         print("\n🚨 TRADING SIGNAL")
         print(f"{'-'*30}")
-        print(f"Signal: {self.quote_data.get('Signal', 'N/A')}")
+        signal = self.quote_data.get('Signal', 'N/A')
+        if isinstance(signal, list) and not signal:
+            signal = 'N/A'
+        print(f"SIGNAL: {signal}")
 
-        # Analyst Ratings
+        # ANALYST RATINGS
         print("\n⭐ ANALYST RATINGS")
         print(f"{'-'*30}")
-        print(f"Ratings: {self.quote_data.get('Ratings', 'N/A')}")
+        print(f"RATINGS: {self.quote_data.get('Ratings', 'N/A')}")
 
         print(f"\n{'='*60}")
         print("Dashboard generated successfully! ✅")
