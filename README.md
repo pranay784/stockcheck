@@ -1,129 +1,124 @@
-# 📊 Stock Dashboard - Web Application
+# Stock Dashboard - Streamlit Application
 
-A comprehensive web-based stock analysis dashboard with interactive charts and real-time financial data.
+📊 **Interactive Stock Analysis Dashboard** - A comprehensive web application for analyzing stock data with charts and financial metrics.
 
-## 🚀 Features
+## ✨ Features
 
-### ✨ Core Functionality
-- **Interactive Web Interface** - Beautiful, responsive design
-- **Real-time Stock Data** - Powered by FinvizFinance API
-- **Interactive Charts** - 4 types of Plotly visualizations
-- **Comprehensive Analysis** - Complete financial metrics and ratios
-
-### 📊 Dashboard Components
-
-#### 🎯 Key Metrics Cards
-- Market Capitalization
-- P/E Ratio
-- Trading Signal
-- Analyst Recommendation
-
-#### 📈 Interactive Charts
-1. **Price Performance** - 6-month stock price trends
-2. **Trading Volume** - Volume analysis over time
-3. **Valuation Ratios** - P/E, P/B, P/S, PEG comparison
-4. **Performance Metrics** - ROE, ROI, ROA distribution
-
-#### 💼 Financial Information
-- Enterprise Value, 52W High/Low, Volume
-- Valuation Ratios (P/B, P/S, PEG)
-- Performance Metrics (ROE, ROI, ROA, Profit Margin)
-- Dividend Information
-- Analyst Ratings and Target Prices
-
-## 🛠️ Technical Stack
-
-- **Backend:** Python Flask
-- **Frontend:** HTML, CSS, JavaScript
-- **Charts:** Plotly.js
-- **Styling:** Tailwind CSS
-- **Icons:** Font Awesome
-- **Data Source:** FinvizFinance API
+- **Financial Data Analysis**: Real-time stock quotes, valuation ratios, performance metrics
+- **Interactive Charts**: Price trends, volume analysis, valuation comparisons, performance distributions
+- **Analyst Insights**: Recommendations, trading signals, and ratings
+- **Risk Assessment**: Beta, volatility, and dividend analysis
+- **Mobile Responsive**: Works perfectly on all devices
 
 ## 🚀 Quick Start
 
-### Prerequisites
-```bash
-pip install -r requirements.txt
-```
+### Local Development
 
-### Run the Application
-```bash
-python web_dashboard.py
-```
+1. **Install Dependencies**:
+   ```bash
+   pip install -r requirements.txt
+   ```
 
-### Access the Dashboard
-- **Local:** `http://127.0.0.1:5000`
-- **Network:** `http://192.168.12.225:5000`
+2. **Run the Application**:
+   ```bash
+   streamlit run app.py
+   ```
 
-## 📋 Usage
+3. **Open Browser**: Navigate to `http://localhost:8501`
 
-1. **Open** the web application in your browser
-2. **Enter** a company name (e.g., "Apple", "Microsoft") or ticker symbol (e.g., "AAPL", "MSFT")
-3. **Click** "Generate Dashboard"
-4. **View** comprehensive financial analysis with interactive charts
-5. **Explore** hover tooltips, zoom functionality, and detailed metrics
+### Using Sample Data (Optional)
+The app includes fallback mock data for demo purposes when API calls fail.
 
-## 🏗️ Project Structure
+## 📱 Usage
+
+1. **Enter Ticker Symbol**: Input any stock ticker (e.g., AAPL, MSFT, TSLA)
+2. **Analyze Stock**: Click "🔍 Analyze Stock" to fetch data
+3. **Explore Tabs**:
+   - **📊 Overview**: Company information and key metrics
+   - **📈 Charts**: Interactive visualizations
+   - **🔍 Analysis**: Detailed performance analysis
+   - **ℹ️ Details**: Complete data and descriptions
+
+## 🚢 Deployment Options
+
+### Option 1: Streamlit Cloud (Recommended - Easiest)
+1. **Push to GitHub**:
+   ```bash
+   git add .
+   git commit -m "Add Stock Dashboard Streamlit app"
+   git push origin main
+   ```
+
+2. **Deploy on Streamlit Cloud**:
+   - Go to [share.streamlit.io](https://share.streamlit.io)
+   - Connect your GitHub repository
+   - Set main file path to `app.py`
+   - Click Deploy!
+
+### Option 2: Heroku Deployment
+1. **Create Heroku App**:
+   ```bash
+   heroku create your-stock-dashboard
+   ```
+
+2. **Set Buildpack**:
+   ```bash
+   heroku buildpacks:set https://github.com/heroku/heroku-buildpack-python
+   ```
+
+3. **Deploy**:
+   ```bash
+   git push heroku main
+   ```
+
+4. **Open App**:
+   ```bash
+   heroku open
+   ```
+
+### Option 3: Other Platforms
+- **Railway**: Auto-deploys from GitHub
+- **Render**: Similar to Railway, great free tier
+- **AWS/GCP/Azure**: Use their serverless/container services
+
+## 📊 Data Sources
+
+- **Finviz Finance**: Primary data provider for financial metrics
+- **Fallback System**: Mock data when API unavailable
+
+## 🛠️ Project Structure
 
 ```
 stock2/
-├── web_dashboard.py          # Main Flask application
-├── stock_dashboard.py        # Original command-line version
-├── test_dashboard.py         # Test script for CLI version
-├── test_web_dashboard.py     # Test script for web version
-├── requirements.txt          # Python dependencies
-├── templates/
-│   ├── index.html           # Homepage with search form
-│   ├── dashboard.html       # Main dashboard template
-│   └── error.html           # Error handling page
-└── README.md                # This file
+├── app.py                     # Main Streamlit application
+├── stock_dashboard.py         # CLI version (reference)
+├── test_dashboard.py          # CLI tests (reference)
+├── requirements.txt           # Python dependencies
+├── .streamlit/
+│   └── config.toml           # Streamlit configuration
+└── README.md                 # This file
 ```
 
-## 🔧 API Endpoints
+## 🐍 Requirements
 
-- `GET /` - Homepage with company search form
-- `POST /dashboard` - Generate and display stock dashboard
-- `GET /api/dashboard/<ticker>` - JSON API for dashboard data
+- Python 3.8+
+- Streamlit 1.28+
+- FinvizFinance 0.14.6
+- Plotly 5.0.0
+- Pandas 1.5.0
 
-## 🎨 Features
+## 🎨 Customization
 
-### Visual Design
-- **Modern UI** with gradient backgrounds and card layouts
-- **Responsive Design** - Works on desktop, tablet, and mobile
-- **Interactive Elements** - Hover effects and smooth transitions
-- **Professional Styling** - Clean typography and consistent design
+### Charts & Colors
+Modify chart colors and styles in `app.py` within the `create_charts()` method.
 
-### Chart Visualizations
-- **Price Performance** - Line chart with trend analysis
-- **Trading Volume** - Bar chart with volume insights
-- **Valuation Ratios** - Multi-colored comparison chart
-- **Performance Metrics** - Pie chart distribution
+### UI Layout
+Update the sidebar and main layout in the `main()` function.
 
-### Error Handling
-- **Graceful Degradation** - Fallback to mock data if API fails
-- **User-Friendly Messages** - Clear error communication
-- **Robust Validation** - Input validation and error recovery
-
-## 🔐 Data Sources
-
-- **Primary:** FinvizFinance API for real-time financial data
-- **Fallback:** Mock data for demonstration when API unavailable
-- **Charts:** Generated using Plotly.js for interactive visualizations
-
-## 🚀 Deployment
-
-### Local Development
-```bash
-python web_dashboard.py
-```
-
-### Production Deployment
-For production deployment, consider:
-- **WSGI Server** (Gunicorn, uWSGI)
-- **Web Server** (Nginx, Apache)
-- **Environment Variables** for API keys
-- **SSL/TLS** encryption
+### Add Features
+- Extend the `StreamlitStockDashboard` class
+- Add new tabs to the interface
+- Integrate additional data sources
 
 ## 🤝 Contributing
 
@@ -133,17 +128,23 @@ For production deployment, consider:
 4. Test thoroughly
 5. Submit a pull request
 
-## 📄 License
+## 📝 License
 
-This project is open source and available under the MIT License.
+This project is open source - feel free to use and modify as needed.
 
-## 🙏 Acknowledgments
+## 🆘 Troubleshooting
 
-- **FinvizFinance** for the financial data API
-- **Plotly** for interactive chart library
-- **Tailwind CSS** for the styling framework
-- **Font Awesome** for the icon library
+**Common Issues:**
+
+1. **Streamlit not found**: Install with `pip install streamlit`
+2. **API rate limits**: App uses fallback mock data automatically
+3. **Port conflicts**: Change port in `.streamlit/config.toml`
+
+**Still having issues?**
+- Check the console for error messages
+- Verify all dependencies are installed
+- Try running with `streamlit run app.py --logger.level=debug`
 
 ---
 
-**Built with ❤️ for comprehensive stock market analysis**
+**Enjoy analyzing stocks with your new interactive dashboard!** 🎯📈
