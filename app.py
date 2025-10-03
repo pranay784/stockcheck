@@ -16,11 +16,54 @@ from plotly.subplots import make_subplots
 from finvizfinance.quote import finvizfinance
 import plotly
 
+
+import requests
+
+import os
+
+class TickerLookup:
+    """Service for looking up stock ticker symbols using LLM."""
+    OPENROUTER_API_URL = "https://openrouter.ai/api/v1/chat/completions"
+    OPENROUTER_API_KEY = os.getenv("OPENROUTER_API_KEY")
+    MODEL = "deepseek/deepseek-chat-v3.1:free"
+
+    def __init__(self):
+        self.headers = {
+            "Authorization": f"Bearer {self.OPENROUTER_API_KEY}",
+            "Content-Type": "application/json",
+            "HTTP-Referer": "https://github.com/pranay784/stockcheck"
+        }
+
+    def find_ticker(self, company_name: str) -> dict:
+        if not company_name:
+            return {"success": False, "ticker": None, "error": "Company name is required"}
+        try:
+            prompt = f"What is the stock ticker symbol for {company_name}? Only return the ticker symbol in capital letters, nothing else."
+            messages = [{"role": "user", "content": prompt}]
+            response = requests.post(
+                self.OPENROUTER_API_URL,
+                headers=self.headers,
+                json={"model": self.MODEL, "messages": messages}
+            )
+            if response.status_code == 200:
+                result = response.json()
+                if "choices" in result and result["choices"]:
+                    ticker = result["choices"][0]["message"]["content"].strip().upper()
+                    if ticker:
+                        return {"success": True, "ticker": ticker, "error": None}
+            return {"success": False, "ticker": None, "error": "Could not find ticker symbol"}
+        except Exception as e:
+            return {"success": False, "ticker": None, "error": str(e)}
+        
+
+
 class StreamlitStockDashboard:
     def __init__(self):
         self.ticker = None
         self.quote_data = None
         self.stock = None
+        self.ticker_lookup = TickerLookup()  # Add this line
+
 
     def test_api_connection(self):
         """Test the Finviz API connection with known good tickers"""
@@ -254,8 +297,21 @@ def main():
     # Sidebar
     with st.sidebar:
         st.markdown('<div class="sidebar-header">📊 Stock Dashboard</div>', unsafe_allow_html=True)
-
         st.markdown("### Enter Stock Information")
+
+        # Company name lookup
+        company_name = st.text_input("Company Name", placeholder="e.g., Apple, Microsoft, Tesla")
+        if st.button("🔎 Find Ticker from Name"):
+            if company_name:
+                with st.spinner('Looking up ticker...'):
+                    result = dashboard.ticker_lookup.find_ticker(company_name)
+                    if result['success']:
+                        st.success(f"Found ticker: {result['ticker']}")
+                        st.session_state.ticker_input = result['ticker']
+                        st.session_state.show_data = False
+                    else:
+                        st.error(f"Error: {result['error']}")
+
         ticker_input = st.text_input(
             "Company Ticker Symbol",
             placeholder="e.g., AAPL, MSFT, TSLA",
